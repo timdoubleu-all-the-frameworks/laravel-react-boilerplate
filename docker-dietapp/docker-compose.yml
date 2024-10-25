@@ -1,0 +1,28 @@
+services:
+  app:
+    image: php:8.2-fpm
+    container_name: php
+    volumes:
+       # Mount the src folder where our Laravel app lives to /var/www/html
+      - ../src:/var/www/html  
+    networks:
+      - laravel
+
+  nginx:
+    image: nginx:latest  # NGINX to serve the Laravel app
+    container_name: nginx
+    volumes:
+      # Mount the Laravel application, /src being the folder that Laravel lives in for our project 
+      - ../src:/var/www/html
+      # Mount the custom NGINX config found in the docker folder
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    networks:
+      - laravel
+    depends_on:
+      - app
+
+networks:
+  laravel:
+    driver: bridge
